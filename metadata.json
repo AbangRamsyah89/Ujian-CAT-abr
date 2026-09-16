@@ -1,0 +1,6 @@
+{
+  "name": "EduExam Anti-Cheat CBT",
+  "description": "Aplikasi ujian online terpadu dengan penilaian otomatis, keamanan anti-cheat berlapis, pemantauan layar real-time, dan pelaporan nilai mendalam.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

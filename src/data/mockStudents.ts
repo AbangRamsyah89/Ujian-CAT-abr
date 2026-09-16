@@ -1,0 +1,201 @@
+import { StudentProfile } from '../types';
+
+export const INITIAL_STUDENTS: StudentProfile[] = [
+  {
+    id: 'std-001',
+    nisn: '0068412901',
+    name: 'Ahmad Fauzi (Siswa Anda)',
+    classRoom: 'XII MIPA 1',
+    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
+    status: 'idle',
+    currentQuestionIndex: 0,
+    answeredCount: 0,
+    flaggedCount: 0,
+    violationCount: 0,
+    violations: [],
+    lastHeartbeat: 'Baru saja',
+    screenStreamActive: true,
+    cameraActive: true,
+    deviceInfo: 'Windows 11 / Chrome 124.0 (Laptop Siswa)',
+    ipAddress: '192.168.10.45'
+  },
+  {
+    id: 'std-002',
+    nisn: '0068412902',
+    name: 'Siti Rahmawati',
+    classRoom: 'XII MIPA 1',
+    avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
+    status: 'taking',
+    currentQuestionIndex: 5,
+    answeredCount: 5,
+    flaggedCount: 1,
+    violationCount: 0,
+    violations: [],
+    lastHeartbeat: '3 detik lalu',
+    screenStreamActive: true,
+    cameraActive: true,
+    deviceInfo: 'macOS Sonoma / Safari 17.2',
+    ipAddress: '192.168.10.48'
+  },
+  {
+    id: 'std-003',
+    nisn: '0068412903',
+    name: 'Budi Santoso',
+    classRoom: 'XII MIPA 1',
+    avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&q=80',
+    status: 'taking',
+    currentQuestionIndex: 3,
+    answeredCount: 3,
+    flaggedCount: 0,
+    violationCount: 1,
+    violations: [
+      {
+        id: 'viol-budi-1',
+        timestamp: '10:14:20',
+        type: 'tab_switch',
+        description: 'Membuka tab baru / kehilangan fokus browser',
+        severity: 'warning'
+      }
+    ],
+    lastHeartbeat: '5 detik lalu',
+    screenStreamActive: true,
+    cameraActive: true,
+    deviceInfo: 'Windows 10 / Edge 123.0',
+    ipAddress: '192.168.10.51'
+  },
+  {
+    id: 'std-004',
+    nisn: '0068412904',
+    name: 'Cantika Dewi Lestari',
+    classRoom: 'XII MIPA 1',
+    avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80',
+    status: 'submitted',
+    currentQuestionIndex: 7,
+    answeredCount: 8,
+    flaggedCount: 0,
+    violationCount: 0,
+    violations: [],
+    score: 95,
+    gradePercentage: 95,
+    submittedAt: '10:32:15',
+    lastHeartbeat: 'Selesai',
+    screenStreamActive: false,
+    cameraActive: false,
+    deviceInfo: 'ChromeOS / Chrome 124.0',
+    ipAddress: '192.168.10.53'
+  },
+  {
+    id: 'std-005',
+    nisn: '0068412905',
+    name: 'Dimas Aditya Pratama',
+    classRoom: 'XII MIPA 1',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+    status: 'taking',
+    currentQuestionIndex: 6,
+    answeredCount: 6,
+    flaggedCount: 2,
+    violationCount: 2,
+    violations: [
+      {
+        id: 'viol-dimas-1',
+        timestamp: '10:18:04',
+        type: 'fullscreen_exit',
+        description: 'Keluar dari mode layar penuh (Escape dipencet)',
+        severity: 'warning'
+      },
+      {
+        id: 'viol-dimas-2',
+        timestamp: '10:22:11',
+        type: 'forbidden_key',
+        description: 'Kombinasi Ctrl+C ditekan untuk menyalin naskah soal',
+        severity: 'danger'
+      }
+    ],
+    lastHeartbeat: '2 detik lalu',
+    screenStreamActive: true,
+    cameraActive: true,
+    deviceInfo: 'Windows 11 / Chrome 124.0',
+    ipAddress: '192.168.10.55'
+  },
+  {
+    id: 'std-006',
+    nisn: '0068412906',
+    name: 'Eka Nurul Aulia',
+    classRoom: 'XII MIPA 1',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+    status: 'submitted',
+    currentQuestionIndex: 7,
+    answeredCount: 8,
+    flaggedCount: 0,
+    violationCount: 0,
+    violations: [],
+    score: 85,
+    gradePercentage: 85,
+    submittedAt: '10:35:40',
+    lastHeartbeat: 'Selesai',
+    screenStreamActive: false,
+    cameraActive: false,
+    deviceInfo: 'macOS Ventura / Chrome 124.0',
+    ipAddress: '192.168.10.60'
+  },
+  {
+    id: 'std-007',
+    nisn: '0068412907',
+    name: 'Farhan Maulana',
+    classRoom: 'XII MIPA 1',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
+    status: 'disqualified',
+    currentQuestionIndex: 2,
+    answeredCount: 2,
+    flaggedCount: 0,
+    violationCount: 4,
+    violations: [
+      {
+        id: 'viol-farhan-1',
+        timestamp: '10:08:12',
+        type: 'tab_switch',
+        description: 'Membuka tab mesin pencari / Google',
+        severity: 'warning'
+      },
+      {
+        id: 'viol-farhan-2',
+        timestamp: '10:11:30',
+        type: 'devtools_open',
+        description: 'Membuka Developer Tools / inspect element browser',
+        severity: 'danger'
+      },
+      {
+        id: 'viol-farhan-3',
+        timestamp: '10:15:00',
+        type: 'tab_switch',
+        description: 'Kehilangan fokus browser lebih dari 30 detik',
+        severity: 'critical'
+      }
+    ],
+    score: 20,
+    gradePercentage: 20,
+    lastHeartbeat: 'Didiskualifikasi',
+    screenStreamActive: false,
+    cameraActive: false,
+    deviceInfo: 'Ubuntu Linux / Firefox 125.0',
+    ipAddress: '192.168.10.62'
+  },
+  {
+    id: 'std-008',
+    nisn: '0068412908',
+    name: 'Gita Savitri Anandita',
+    classRoom: 'XII MIPA 1',
+    avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80',
+    status: 'taking',
+    currentQuestionIndex: 4,
+    answeredCount: 4,
+    flaggedCount: 1,
+    violationCount: 0,
+    violations: [],
+    lastHeartbeat: '1 detik lalu',
+    screenStreamActive: true,
+    cameraActive: true,
+    deviceInfo: 'Windows 11 / Brave 1.64',
+    ipAddress: '192.168.10.65'
+  }
+];
