@@ -10,6 +10,7 @@ import { StudentPortal } from './components/student/StudentPortal';
 import { ExamTakingView } from './components/student/ExamTakingView';
 import { ProctorDashboard } from './components/proctor/ProctorDashboard';
 import { DetailedReportView } from './components/reports/DetailedReportView';
+import { ExamBuilderView } from './components/teacher/ExamBuilderView';
 
 const MainContent: React.FC = () => {
   const { activeRole, studentSessionStatus } = useExam();
@@ -21,6 +22,7 @@ const MainContent: React.FC = () => {
       )}
       {activeRole === 'proctor' && <ProctorDashboard />}
       {activeRole === 'report' && <DetailedReportView />}
+      {activeRole === 'builder' && <ExamBuilderView />}
     </main>
   );
 };

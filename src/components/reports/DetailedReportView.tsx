@@ -20,7 +20,8 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useExam } from '../../context/ExamContext';
-import { exportResultsToCSV } from '../../utils/grading';
+import { exportResultsToCSV, exportResultsToExcel } from '../../utils/grading';
+import { SchoolLogo } from '../common/SchoolLogo';
 
 export const DetailedReportView: React.FC = () => {
   const {
@@ -82,9 +83,27 @@ export const DetailedReportView: React.FC = () => {
   const passCount = classScores.filter((s) => s >= selectedExam.kkm).length;
   const passRate = Math.round((passCount / (classScores.length || 1)) * 100);
 
+  // Handle Export Excel (.xls)
+  const handleExportExcel = () => {
+    const xmlData = exportResultsToExcel(
+      students,
+      selectedExam.title,
+      selectedExam.schoolName || 'SMAN 1 Belitang Hilir',
+      selectedExam.teacherName || 'Abang Ramsyah, S.Pd.'
+    );
+    const blob = new Blob([xmlData], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Rekap_Nilai_CBT_${selectedExam.title.replace(/\s+/g, '_').substring(0, 25)}_${Date.now()}.xls`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Handle Export CSV
   const handleExportCSV = () => {
-    const csvData = exportResultsToCSV(students, selectedExam.title);
+    const csvData = exportResultsToCSV(students, selectedExam.title, selectedExam.schoolName || 'SMAN 1 Belitang Hilir');
     const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -112,19 +131,27 @@ export const DetailedReportView: React.FC = () => {
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       {/* Top Header & Tab Toggle */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-5">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-600">
-            <span>Pelaporan & Analitik Nilai Ujian</span>
-            <span>•</span>
-            <span>{selectedExam.grade}</span>
+        <div className="flex items-center gap-3.5">
+          <SchoolLogo size="lg" />
+          <div>
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-600">
+              <span>SMAN 1 Belitang Hilir</span>
+              <span>•</span>
+              <span>Pelaporan & Analitik Nilai Ujian</span>
+              <span>•</span>
+              <span>{selectedExam.grade}</span>
+            </div>
+            <h1 className="mt-0.5 text-2xl font-extrabold text-slate-900">
+              {selectedExam.title}
+            </h1>
+            <p className="mt-1 text-xs text-slate-500">
+              Mata Pelajaran: <span className="font-semibold text-slate-700">{selectedExam.subject}</span> • Guru Pengampu / Pembuat Soal: <span className="font-bold text-indigo-600">{selectedExam.teacherName || 'Abang Ramsyah, S.Pd.'}</span>
+            </p>
           </div>
-          <h1 className="mt-1 text-2xl font-extrabold text-slate-900">
-            {selectedExam.title}
-          </h1>
         </div>
 
-        {/* View mode toggle */}
-        <div className="flex items-center gap-2">
+        {/* View mode toggle & action buttons */}
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center rounded-xl bg-slate-100 p-1 text-xs font-bold">
             <button
               onClick={() => setActiveTab('individual')}
@@ -151,17 +178,29 @@ export const DetailedReportView: React.FC = () => {
           <button
             onClick={handlePrint}
             className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+            title="Cetak format cetak / PDF"
           >
-            <Printer className="h-4 w-4" />
+            <Printer className="h-4 w-4 text-slate-500" />
             <span>Cetak Rapor</span>
+          </button>
+
+          {/* Export to Excel */}
+          <button
+            onClick={handleExportExcel}
+            className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 shadow-xs transition-colors"
+            title="Unduh format spreadsheet Microsoft Excel resmi (.xls)"
+          >
+            <Download className="h-4 w-4" />
+            <span>Ekspor Excel (.xls)</span>
           </button>
 
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-indigo-700 shadow-xs transition-colors"
+            className="flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors"
+            title="Unduh file CSV"
           >
-            <Download className="h-4 w-4" />
-            <span>Unduh CSV</span>
+            <Download className="h-3.5 w-3.5 text-slate-500" />
+            <span>CSV</span>
           </button>
         </div>
       </div>

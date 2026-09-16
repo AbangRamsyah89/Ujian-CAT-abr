@@ -17,9 +17,11 @@ import { useExam } from '../../context/ExamContext';
 import { MOCK_EXAMS } from '../../data/mockExams';
 import { CameraCapture } from '../common/CameraCapture';
 import { requestBrowserFullscreen } from '../../utils/antiCheat';
+import { SchoolLogo } from '../common/SchoolLogo';
 
 export const StudentPortal: React.FC = () => {
   const { 
+    exams,
     selectedExam, 
     setSelectedExam, 
     startExam, 
@@ -80,7 +82,7 @@ export const StudentPortal: React.FC = () => {
             <div className="mt-5 border-t border-slate-100 pt-4 space-y-2 text-xs text-slate-600">
               <div className="flex justify-between py-1">
                 <span className="text-slate-400">Sekolah Asal:</span>
-                <span className="font-semibold text-slate-800">SMA Negeri 1 Indonesia</span>
+                <span className="font-bold text-slate-900">SMAN 1 Belitang Hilir</span>
               </div>
               <div className="flex justify-between py-1">
                 <span className="text-slate-400">Ruang / Sesi:</span>
@@ -144,13 +146,22 @@ export const StudentPortal: React.FC = () => {
           {/* Exam Details Card */}
           <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-              <div>
-                <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">
-                  Naskah Ujian Terpilih
-                </span>
-                <h1 className="text-xl font-extrabold text-slate-900 mt-1">
-                  {selectedExam.title}
-                </h1>
+              <div className="flex items-center gap-3.5">
+                <SchoolLogo size="md" />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">
+                      {selectedExam.schoolName || 'SMAN 1 Belitang Hilir'}
+                    </span>
+                    <span className="text-slate-300">•</span>
+                    <span className="text-xs text-slate-500">
+                      Guru: <strong className="text-slate-800">{selectedExam.teacherName || 'Pengampu'}</strong>
+                    </span>
+                  </div>
+                  <h1 className="text-xl font-extrabold text-slate-900 mt-0.5">
+                    {selectedExam.title}
+                  </h1>
+                </div>
               </div>
               <div className="hidden sm:block">
                 <span className="rounded-xl bg-indigo-50 p-2.5 text-indigo-600 inline-block">
@@ -161,7 +172,7 @@ export const StudentPortal: React.FC = () => {
 
             {/* Switch Exam Pills */}
             <div className="mt-4 flex flex-wrap gap-2">
-              {MOCK_EXAMS.map((ex) => (
+              {exams.map((ex) => (
                 <button
                   key={ex.id}
                   onClick={() => {
@@ -175,7 +186,7 @@ export const StudentPortal: React.FC = () => {
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
-                  {ex.subject} ({ex.durationMinutes} mnt)
+                  {ex.subject} ({ex.teacherName?.split(',')[0] || 'Guru'})
                 </button>
               ))}
             </div>

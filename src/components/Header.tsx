@@ -7,10 +7,12 @@ import {
   Clock, 
   AlertTriangle, 
   HelpCircle,
-  RotateCcw
+  RotateCcw,
+  BookOpen
 } from 'lucide-react';
 import { useExam } from '../context/ExamContext';
 import { MOCK_EXAMS } from '../data/mockExams';
+import { SchoolLogo } from './common/SchoolLogo';
 
 export const Header: React.FC = () => {
   const {
@@ -29,19 +31,17 @@ export const Header: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-xs">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 sm:px-6">
-        {/* Brand & Security Status */}
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6">
+        {/* Brand & School Header */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm ring-2 ring-indigo-500/20">
-            <ShieldCheck className="h-6 w-6" />
-          </div>
+          <SchoolLogo size="md" withUpload={true} />
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-base font-bold tracking-tight text-slate-900">
-                EduExam
+              <span className="text-base font-extrabold tracking-tight text-slate-900">
+                SMAN 1 Belitang Hilir
               </span>
-              <span className="rounded-md bg-indigo-50 px-1.5 py-0.5 text-[10px] font-semibold text-indigo-700 ring-1 ring-indigo-700/10">
-                CBT v2.4
+              <span className="rounded-md bg-indigo-50 px-1.5 py-0.5 text-[10px] font-bold text-indigo-700 ring-1 ring-indigo-700/10">
+                CBT Online
               </span>
               <span className="hidden sm:inline-flex items-center gap-1 rounded-md bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -49,17 +49,20 @@ export const Header: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-slate-500 truncate max-w-[200px] sm:max-w-xs">
-              {selectedExam.title}
+              <span className="font-semibold text-slate-700">{selectedExam.subject}</span>
+              {selectedExam.teacherName && (
+                <span className="text-indigo-600 font-medium"> • Guru: {selectedExam.teacherName}</span>
+              )}
             </p>
           </div>
         </div>
 
         {/* Navigation / Role Switcher Tabs */}
-        <div className="flex items-center gap-1 rounded-xl bg-slate-100 p-1 text-xs font-semibold">
+        <div className="flex items-center gap-1 rounded-xl bg-slate-100 p-1 text-xs font-semibold overflow-x-auto">
           <button
             id="role-tab-student"
             onClick={() => setActiveRole('student')}
-            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all ${
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all whitespace-nowrap ${
               activeRole === 'student'
                 ? 'bg-white text-indigo-700 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -75,7 +78,7 @@ export const Header: React.FC = () => {
           <button
             id="role-tab-proctor"
             onClick={() => setActiveRole('proctor')}
-            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all ${
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all whitespace-nowrap ${
               activeRole === 'proctor'
                 ? 'bg-white text-indigo-700 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -91,7 +94,7 @@ export const Header: React.FC = () => {
           <button
             id="role-tab-report"
             onClick={() => setActiveRole('report')}
-            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all ${
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all whitespace-nowrap ${
               activeRole === 'report'
                 ? 'bg-white text-indigo-700 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -99,6 +102,19 @@ export const Header: React.FC = () => {
           >
             <BarChart3 className="h-4 w-4 text-indigo-600" />
             <span>Laporan Nilai</span>
+          </button>
+
+          <button
+            id="role-tab-builder"
+            onClick={() => setActiveRole('builder')}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all whitespace-nowrap ${
+              activeRole === 'builder'
+                ? 'bg-white text-indigo-700 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <BookOpen className="h-4 w-4 text-indigo-600" />
+            <span>Bank & Buat Soal</span>
           </button>
         </div>
 

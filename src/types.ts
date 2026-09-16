@@ -22,11 +22,23 @@ export interface Question {
   explanation: string;
 }
 
+export interface Teacher {
+  id: string;
+  name: string;
+  nip?: string;
+  subject?: string;
+  email?: string;
+  phone?: string;
+}
+
 export interface Exam {
   id: string;
   title: string;
   subject: string;
   grade: string;
+  schoolName?: string;
+  teacherName: string;
+  teacherNip?: string;
   token: string;
   durationMinutes: number;
   kkm: number; // Kriteria Ketuntasan Minimal (e.g., 75)

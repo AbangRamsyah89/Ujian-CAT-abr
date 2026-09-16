@@ -14,9 +14,15 @@ import { createViolationRecord, AntiCheatSoundAlert } from '../utils/antiCheat';
 import { gradeExamSession, DetailedExamResult } from '../utils/grading';
 
 interface ExamContextType {
-  activeRole: 'student' | 'proctor' | 'report';
-  setActiveRole: (role: 'student' | 'proctor' | 'report') => void;
+  activeRole: 'student' | 'proctor' | 'report' | 'builder';
+  setActiveRole: (role: 'student' | 'proctor' | 'report' | 'builder') => void;
   
+  // Exams
+  exams: Exam[];
+  saveExam: (exam: Exam) => void;
+  deleteExam: (examId: string) => void;
+  loadExamIntoStudentPortal: (examId: string) => void;
+
   // Selected Exam
   selectedExam: Exam;
   setSelectedExam: (exam: Exam) => void;
@@ -60,9 +66,85 @@ interface ExamContextType {
 
 const ExamContext = createContext<ExamContextType | undefined>(undefined);
 
+const STORAGE_KEY = 'sman1_belitang_hilir_cbt_exams_v3';
+
+// Ensures all multiple choice questions strictly have options A, B, C, D, E
+function normalizeExamQuestions(examList: Exam[]): Exam[] {
+  return examList.map((exam) => ({
+    ...exam,
+    schoolName: exam.schoolName || 'SMAN 1 Belitang Hilir',
+    teacherName: exam.teacherName || 'Abang Ramsyah, S.Pd.',
+    questions: exam.questions.map((q) => {
+      if (q.type === 'multiple_choice' && Array.isArray(q.options)) {
+        const hasE = q.options.some((o) => o.id === 'E');
+        if (!hasE) {
+          // If only 4 options (A, B, C, D), append option E
+          return {
+            ...q,
+            options: [
+              ...q.options,
+              { id: 'E', text: 'Semua jawaban di atas tidak tepat' }
+            ]
+          };
+        }
+      }
+      return q;
+    })
+  }));
+}
+
 export const ExamProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [activeRole, setActiveRole] = useState<'student' | 'proctor' | 'report'>('student');
-  const [selectedExam, setSelectedExam] = useState<Exam>(MOCK_EXAMS[0]);
+  const [activeRole, setActiveRole] = useState<'student' | 'proctor' | 'report' | 'builder'>('student');
+  const [exams, setExams] = useState<Exam[]>(() => {
+    try {
+      // 1. Try modern storage key
+      const savedV3 = localStorage.getItem(STORAGE_KEY);
+      if (savedV3) {
+        const parsed = JSON.parse(savedV3);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return normalizeExamQuestions(parsed);
+        }
+      }
+
+      // 2. Try legacy storage key and upgrade it
+      const legacySaved = localStorage.getItem('sman1_belitang_hilir_cbt_exams');
+      if (legacySaved) {
+        const parsedLegacy = JSON.parse(legacySaved);
+        if (Array.isArray(parsedLegacy) && parsedLegacy.length > 0) {
+          const upgraded = normalizeExamQuestions(parsedLegacy);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(upgraded));
+          return upgraded;
+        }
+      }
+    } catch (e) {
+      console.warn('Could not load saved exams from storage', e);
+    }
+    return normalizeExamQuestions(MOCK_EXAMS);
+  });
+
+  const [selectedExam, setSelectedExam] = useState<Exam>(() => {
+    try {
+      const savedV3 = localStorage.getItem(STORAGE_KEY);
+      if (savedV3) {
+        const parsed = JSON.parse(savedV3);
+        if (Array.isArray(parsed) && parsed.length > 0) return normalizeExamQuestions(parsed)[0];
+      }
+    } catch (e) {
+      // fallback
+    }
+    return normalizeExamQuestions(MOCK_EXAMS)[0];
+  });
+
+  // Persist exams whenever updated
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(exams));
+      // Keep legacy key synced for safety
+      localStorage.setItem('sman1_belitang_hilir_cbt_exams', JSON.stringify(exams));
+    } catch (e) {
+      console.warn('Could not save exams to storage', e);
+    }
+  }, [exams]);
   
   // Student State
   const [studentSessionStatus, setStudentSessionStatus] = useState<StudentExamStatus>('idle');
@@ -325,11 +407,48 @@ export const ExamProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setActiveRole('report');
   }, [students, studentResult, selectedExam]);
 
+  const saveExam = useCallback((exam: Exam) => {
+    setExams((prev) => {
+      const idx = prev.findIndex((e) => e.id === exam.id);
+      if (idx > -1) {
+        const updated = [...prev];
+        updated[idx] = exam;
+        return updated;
+      }
+      return [exam, ...prev];
+    });
+
+    if (selectedExam.id === exam.id) {
+      setSelectedExam(exam);
+    }
+  }, [selectedExam.id]);
+
+  const deleteExam = useCallback((examId: string) => {
+    setExams((prev) => prev.filter((e) => e.id !== examId));
+    if (selectedExam.id === examId && exams.length > 1) {
+      const remaining = exams.find((e) => e.id !== examId) || exams[0];
+      setSelectedExam(remaining);
+    }
+  }, [selectedExam.id, exams]);
+
+  const loadExamIntoStudentPortal = useCallback((examId: string) => {
+    const target = exams.find((e) => e.id === examId);
+    if (target) {
+      setSelectedExam(target);
+      resetExamSession();
+      setActiveRole('student');
+    }
+  }, [exams, resetExamSession]);
+
   return (
     <ExamContext.Provider
       value={{
         activeRole,
         setActiveRole,
+        exams,
+        saveExam,
+        deleteExam,
+        loadExamIntoStudentPortal,
         selectedExam,
         setSelectedExam,
         studentSessionStatus,
